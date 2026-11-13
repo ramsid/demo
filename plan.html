@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledgerly Phase 1 Plan</title>
+<style>
+:root {
+  --bg:#f7f7f5; --surface:#ffffff; --text:#1d1d1f; --muted:#5f6368; --border:#e3e3e0;
+  --accent:#0a7c66; --accent-soft:#e3f3ef; --code:#f1f1ee;
+  --must:#b42318; --must-bg:#fdecea; --should:#8a5a00; --should-bg:#fff4dc; --could:#3b5bdb; --could-bg:#e8edff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#121314; --surface:#1b1c1e; --text:#ececec; --muted:#a0a4a8; --border:#2e3033;
+    --accent:#4fd1b0; --accent-soft:#16302a; --code:#24262a;
+    --must:#ff8a80; --must-bg:#3a1d1b; --should:#ffcc66; --should-bg:#352a12; --could:#9db0ff; --could-bg:#1e2540;
+  }
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-padding-top:16px; }
+body { margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; }
+.layout { display:grid; grid-template-columns:260px minmax(0,1fr); max-width:1240px; margin:0 auto; gap:32px; padding:24px; }
+nav { position:sticky; top:24px; align-self:start; max-height:calc(100vh - 48px); overflow:auto;
+  background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; }
+nav .title { font-weight:700; margin:0 0 8px; }
+nav .sub { color:var(--muted); font-size:13px; margin:0 0 12px; }
+nav ul { margin:0; padding:0; list-style:none; }
+nav li { margin:4px 0; font-size:14px; }
+nav a { color:var(--text); text-decoration:none; }
+nav a:hover { color:var(--accent); }
+main { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:32px 40px; min-width:0; }
+h1 { font-size:30px; line-height:1.25; margin:0 0 12px; }
+h2 { font-size:23px; margin:44px 0 12px; padding-top:20px; border-top:1px solid var(--border); }
+h3 { font-size:18px; margin:28px 0 8px; }
+a { color:var(--accent); }
+blockquote { margin:16px 0; padding:12px 16px; background:var(--accent-soft); border-left:4px solid var(--accent);
+  border-radius:8px; }
+blockquote p { margin:4px 0; }
+.table-wrap { overflow-x:auto; margin:16px 0; border:1px solid var(--border); border-radius:10px; }
+table { border-collapse:collapse; width:100%; font-size:14.5px; }
+th, td { text-align:left; vertical-align:top; padding:9px 12px; border-bottom:1px solid var(--border); }
+th { background:var(--code); font-weight:600; white-space:nowrap; }
+tr:last-child td { border-bottom:none; }
+code { font:13.5px/1.5 ui-monospace, "SF Mono", Menlo, monospace; background:var(--code); padding:1px 5px; border-radius:5px; }
+pre { background:var(--code); padding:14px 16px; border-radius:10px; overflow-x:auto; }
+pre code { padding:0; background:none; }
+ul, ol { padding-left:22px; }
+li { margin:4px 0; }
+.badge { display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
+  padding:1px 8px; border-radius:999px; margin-right:6px; vertical-align:1px; }
+.badge.must { color:var(--must); background:var(--must-bg); }
+.badge.should { color:var(--should); background:var(--should-bg); }
+.badge.could { color:var(--could); background:var(--could-bg); }
+hr { border:none; }
+@media (max-width: 860px) {
+  .layout { grid-template-columns:1fr; padding:16px; gap:16px; }
+  nav { position:static; max-height:none; }
+  main { padding:20px 16px; }
+  h1 { font-size:25px; }
+}
+@media print {
+  nav { display:none; } .layout { display:block; } main { border:none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav aria-label="Contents">
+  <p class="title">Ledgerly · Phase 1</p>
+  <p class="sub">Private finance tracker for iOS. Draft v2 for review.</p>
+  <ul><li><a href="#1-goals-and-non-goals">1. Goals and non-goals</a></li><li><a href="#2-monarch-money-as-reference-what-to-borrow-and-what-to-change">2. Monarch Money as reference: what to borrow and what to change</a></li><li><a href="#3-security-and-privacy-priority-1">3. Security and privacy (priority #1)</a></li><li><a href="#4-automatic-sync">4. Automatic sync</a></li><li><a href="#5-phase-1-feature-list">5. Phase 1 feature list</a></li><li><a href="#6-ai-design-embedded-local-model">6. AI design: embedded local model</a></li><li><a href="#7-ease-of-use">7. Ease of use</a></li><li><a href="#8-technical-architecture">8. Technical architecture</a></li><li><a href="#9-milestones">9. Milestones</a></li><li><a href="#10-open-questions-round-2">10. Open questions (round 2)</a></li><li><a href="#11-risks">11. Risks</a></li></ul>
+</nav>
+<main>
+<h1 id="private-finance-tracker-for-ios-phase-1-plan-v2-for-review">Private Finance Tracker for iOS: Phase 1 Plan (v2, for review)</h1>
+<blockquote>
+<p>Status: <strong>draft v2 for review</strong>. No code yet.<br />
+Working name: <strong>Ledgerly</strong> (placeholder)<br />
+Guiding principle: <strong>your financial data is stored and analyzed only on your devices. The only things that ever see it are your bank and the sync provider you connect. We never do.</strong>  </p>
+</blockquote>
+<h3 id="what-changed-in-v2-based-on-your-answers">What changed in v2 (based on your answers)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Your answer</th>
+<th>Effect on the plan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>US, Wells Fargo / Chase / Citi</td>
+<td><strong>Automatic bank sync through Plaid</strong> is now the main ingestion path. Apple FinanceKit is dropped, since it only covers Apple Card / Cash / Savings in the US.</td>
+</tr>
+<tr>
+<td>Automatic sync, less work</td>
+<td>Statement import (CSV/PDF) moves to <strong>Phase 2</strong>. A <strong>thin, stateless sync relay</strong> is added (§4.2) because Plaid needs a server-side secret.</td>
+</tr>
+<tr>
+<td>Stocks (optional)</td>
+<td><strong>Investments</strong> added as a <em>should</em>: holdings plus a <strong>monthly portfolio report notification</strong> (§5.6).</td>
+</tr>
+<tr>
+<td>Support older phones</td>
+<td><strong>Ship our own small local LLM inside the app</strong> (llama.cpp + a ~1–2B open model). Apple's built-in model is used only as a bonus on newer phones (§6.2).</td>
+</tr>
+<tr>
+<td>Personal / household first, App Store later</td>
+<td>Distribution through <strong>TestFlight</strong>. The relay runs <strong>in your own cloud account</strong> for now. An App Store hardening track is added (§9).</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="1-goals-and-non-goals">1. Goals and non-goals</h2>
+<h3 id="goals">Goals</h3>
+<ol>
+<li><strong>Automatically</strong> sync checking, savings, and credit card accounts (Wells Fargo, Chase, Citi), plus brokerage accounts if possible.</li>
+<li>Analyze income and spending over <strong>weeks, months, quarters, years, or a custom range</strong>.</li>
+<li>Use an <strong>embedded on-device LLM</strong> that works on older iPhones. No cloud AI.</li>
+<li><strong>Alert proactively</strong> about:
+   - spending you probably didn't notice (unrecognized, duplicate, fee, trial-to-paid, card-testing charges)
+   - <strong>monthly subscription review</strong>, so you can decide what to keep or cancel
+   - <strong>drastic increases</strong> in a category, at a merchant, or in a subscription price
+   - <em>(optional)</em> a <strong>monthly stock / portfolio change</strong> summary</li>
+<li>Need very little effort: you connect once, and the app does the rest.</li>
+</ol>
+<h3 id="non-goals-for-phase-1">Non-goals for Phase 1</h3>
+<ul>
+<li>Manual CSV / OFX / PDF statement import (Phase 2)</li>
+<li>Net worth history beyond the accounts that sync automatically, plus goals (Phase 2)</li>
+<li>Bill pay or moving money (never). Access is <strong>read-only</strong>.</li>
+<li>Cloud AI (never by default)</li>
+</ul>
+<hr />
+<h2 id="2-monarch-money-as-reference-what-to-borrow-and-what-to-change">2. Monarch Money as reference: what to borrow and what to change</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Monarch feature</th>
+<th>Our take for Phase 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Account aggregation (Plaid / MX / Finicity)</td>
+<td>✅ <strong>Plaid</strong>, through a stateless relay that we (or you) control and that never stores your financial data</td>
+</tr>
+<tr>
+<td>Dashboard</td>
+<td>✅ Simpler, with a "what changed / needs attention" card at the top</td>
+</tr>
+<tr>
+<td>Transactions, rules, tags, splits</td>
+<td>✅ Search, edit, rules, tags. Splits are a <em>should</em>.</td>
+</tr>
+<tr>
+<td>Auto-categorization</td>
+<td>✅ Plaid's categories, then your rules, then the on-device LLM for anything unclear. Learns from your corrections.</td>
+</tr>
+<tr>
+<td>Cash flow and reports</td>
+<td>✅ Income vs spend for any period. Sankey is a <em>could</em>.</td>
+</tr>
+<tr>
+<td>Budgets (including flex)</td>
+<td>✅ Simple monthly budgets plus "safe to spend". Flex budgeting is a <em>could</em>.</td>
+</tr>
+<tr>
+<td>Recurring / subscriptions</td>
+<td>✅ <strong>Core feature</strong>: detection, monthly review, price-hike alerts</td>
+</tr>
+<tr>
+<td>Investments (holdings, performance)</td>
+<td>✅ <em>Should</em>: holdings plus monthly change report. Detailed performance analytics come later.</td>
+</tr>
+<tr>
+<td>AI Assistant (cloud)</td>
+<td>✅ <strong>On-device</strong> "Ask". This is our main difference from Monarch.</td>
+</tr>
+<tr>
+<td>Partner collaboration</td>
+<td>🟡 Phase 1.5: household sharing with end-to-end encryption (see open question 1)</td>
+</tr>
+<tr>
+<td>Web app</td>
+<td>❌ On-device by design</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="3-security-and-privacy-priority-1">3. Security and privacy (priority #1)</h2>
+<h3 id="31-principles">3.1 Principles</h3>
+<ol>
+<li><strong>Data lives on the device.</strong> Transactions, balances, holdings, categories, and AI outputs are stored only in the app's encrypted database.</li>
+<li><strong>Minimal, stateless server.</strong> The only server component is a relay that adds the Plaid secret to requests. It <strong>stores no financial data, keeps no request or response bodies in logs, and has no database of transactions</strong> (§4.2).</li>
+<li><strong>No third-party SDKs</strong> except Plaid Link (required for bank login). No analytics, crash, or ad SDKs.</li>
+<li><strong>The LLM is sandboxed.</strong> It runs fully on device, reads data only through read-only tools, and has no network access. Any change it proposes needs your tap.</li>
+<li><strong>Transparency.</strong> The "Privacy Ledger" screen lists every network call: when, which host, what kind (for example "Plaid: transactions sync"), and how many bytes. The App Store privacy label is set up for "Data Not Collected" by us. The fact that Plaid is a data processor is disclosed.</li>
+</ol>
+<h3 id="32-concrete-controls">3.2 Concrete controls</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data at rest</td>
+<td><strong>SQLCipher</strong>-encrypted SQLite (via GRDB). The random 256-bit key is stored in <strong>Keychain</strong> with <code>WhenUnlockedThisDeviceOnly</code> and wrapped with a Secure Enclave key. File protection <code>.complete</code>.</td>
+</tr>
+<tr>
+<td>Plaid access tokens</td>
+<td><strong>Kept only on the device</strong> in Keychain (<code>ThisDeviceOnly</code>). The relay never stores them. The device sends the token with each request, and the relay forwards it.</td>
+</tr>
+<tr>
+<td>App access</td>
+<td>Face ID / Touch ID / passcode lock on by default. Re-authentication for export and for adding or removing accounts.</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>TLS 1.3 with <strong>certificate pinning</strong> to the relay. ATS is strict. A single <code>NetworkGateway</code> only allows a short list of hosts (relay, Plaid Link).</td>
+</tr>
+<tr>
+<td>Relay auth</td>
+<td>App Attest / DeviceCheck plus a per-device key registered at setup, so only your app instances can use your relay. Rate limited.</td>
+</tr>
+<tr>
+<td>Notifications</td>
+<td>Redacted on the lock screen by default ("2 items need your attention"). Push payloads from the relay contain <strong>no data at all</strong>. They only wake the app so it can sync.</td>
+</tr>
+<tr>
+<td>Background / app switcher</td>
+<td>Content blurred in the app switcher. Optional "hide amounts" mode.</td>
+</tr>
+<tr>
+<td>Backups</td>
+<td>Database excluded from iCloud device backup. Optional passphrase-encrypted export.</td>
+</tr>
+<tr>
+<td>LLM weights</td>
+<td>Bundled with the app and checked against a SHA-256 hash before loading.</td>
+</tr>
+<tr>
+<td>Prompt injection</td>
+<td>Merchant names and memos are untrusted text. The LLM has no write, export, or network tools. Its outputs must match a schema (grammar-constrained).</td>
+</tr>
+<tr>
+<td>Logging</td>
+<td><code>os.Logger</code> with <code>.private</code> for every value. The relay logs only status codes and timing.</td>
+</tr>
+<tr>
+<td>Erase</td>
+<td>"Erase all data" calls Plaid <code>/item/remove</code> for each bank connection, then destroys the encryption key, then deletes files.</td>
+</tr>
+<tr>
+<td>Supply chain</td>
+<td>Few, pinned dependencies (GRDB/SQLCipher, llama.cpp, Plaid Link SDK). The relay code is small (~300 lines) and open for audit.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="33-threat-model-short">3.3 Threat model (short)</h3>
+<ul>
+<li><strong>Lost or stolen phone:</strong> iOS passcode + Data Protection + app lock + Keychain <code>ThisDeviceOnly</code> tokens. Erasing the app revokes Plaid access.</li>
+<li><strong>Relay compromise:</strong> an attacker would get the Plaid secret but <strong>no stored data or tokens</strong>. Without a device's access token they can't pull any data. Mitigations: rotate the secret, use App Attest, set alerting.</li>
+<li><strong>Plaid / bank:</strong> they see the data, which is unavoidable for automatic sync. This is disclosed clearly and access can be revoked from the app.</li>
+<li><strong>Malicious merchant text:</strong> treated as data, never as instructions. Read-only tools.</li>
+<li><strong>Shoulder-surfing:</strong> redacted notifications, blur, hide-amounts mode.</li>
+</ul>
+<hr />
+<h2 id="4-automatic-sync">4. Automatic sync</h2>
+<h3 id="41-provider-options-us-for-wells-fargo-chase-citi">4.1 Provider options (US, for Wells Fargo / Chase / Citi)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Banks</th>
+<th>Investments</th>
+<th>Backend needed</th>
+<th>Real-time-ish</th>
+<th>Cost for personal use</th>
+<th>Path to App Store</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Plaid</strong> ✅ <em>recommended</em></td>
+<td>All three, via OAuth (bank-approved APIs, no screen scraping)</td>
+<td>✅ holdings + investment transactions</td>
+<td>Yes: thin relay (secret + webhooks)</td>
+<td>✅ webhooks → silent push</td>
+<td>Plaid's free tier for a limited number of connections (limits to confirm in M0)</td>
+<td>✅ Standard. Needs production approval + security questionnaire. Paid per connection.</td>
+</tr>
+<tr>
+<td><strong>SimpleFIN Bridge</strong></td>
+<td>All three (it uses MX behind the scenes)</td>
+<td>Balances. Holdings support is limited (to verify).</td>
+<td><strong>No.</strong> The phone talks to it directly.</td>
+<td>❌ ~daily refresh, no push</td>
+<td>~$15 / year paid by the user</td>
+<td>Weaker: users must sign up with a separate service</td>
+</tr>
+<tr>
+<td>Teller</td>
+<td>Chase, Wells Fargo, Citi</td>
+<td>❌</td>
+<td>Yes (mTLS certificate must stay server-side)</td>
+<td>Partial</td>
+<td>Free developer tier</td>
+<td>OK, but no investments</td>
+</tr>
+<tr>
+<td>MX / Finicity / Akoya</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Enterprise contracts</td>
+<td>Heavy for an individual developer</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Recommendation:</strong> build on <strong>Plaid</strong> behind a <code>SyncProvider</code> protocol. It covers all three banks with official OAuth connections, includes investments, supports webhooks for faster alerts, and is the standard route to the App Store. Keep <strong>SimpleFIN</strong> as a planned second adapter (Phase 1.5) for people who want <strong>no relay at all</strong>.</p>
+<blockquote>
+<p>M0 check: confirm that Chase, Wells Fargo, and Citi OAuth connections plus the Investments product are available on Plaid's free/limited tier for a personal account, and note the current per-connection pricing for App Store planning. US bank data-access rules (CFPB §1033, bank fees to aggregators) are still changing, so this is tracked as a risk.  </p>
+</blockquote>
+<h3 id="42-sync-relay-design-stateless-zero-knowledge-as-far-as-it-can-be">4.2 Sync relay design (stateless, zero-knowledge as far as it can be)</h3>
+<pre><code> iPhone (encrypted DB, access tokens in Keychain)
+   │  1. Link: Plaid Link SDK on device → public_token
+   │  2. POST /exchange {public_token}        ──► Relay adds client_id + secret ──► Plaid
+   │     ◄── access_token (returned to device, NOT stored by the relay)
+   │  3. POST /sync {access_token, cursor}    ──► Relay forwards ──► /transactions/sync
+   │     ◄── added / modified / removed transactions (streamed back, never stored)
+   │
+   │  Webhook path (for faster alerts):
+   │     Plaid ──webhook(item_id)──► Relay looks up item_id → APNs device token
+   │                                  (the ONLY stored mapping, contains no financial data)
+   │     Relay ──silent push (empty payload)──► iPhone wakes → runs /sync → local alerts
+</code></pre>
+<ul>
+<li><strong>Hosting (Phase 1, personal):</strong> a Cloudflare Worker (or Fly.io / small VPS) <strong>in your own account</strong>. The secret is kept in the platform's secret store. Free tier is enough.</li>
+<li><strong>Hosting (App Store):</strong> the same open-source relay run by us, with a published no-logging policy, regular secret rotation, and an independent review.</li>
+<li><strong>Stored state:</strong> only <code>{item_id → APNs token, device public key}</code>. No balances, transactions, or access tokens.</li>
+<li><strong>Endpoints:</strong> <code>/link-token</code>, <code>/exchange</code>, <code>/transactions/sync</code>, <code>/accounts/balance</code>, <code>/investments/holdings</code>, <code>/investments/transactions</code>, <code>/item/remove</code>, <code>/webhook</code>.</li>
+<li><strong>Silent pushes are rate-limited by iOS and not guaranteed.</strong> To fill the gaps the app also syncs on open, on <code>BGAppRefreshTask</code>, and when you pull to refresh.</li>
+</ul>
+<h3 id="43-sync-behavior">4.3 Sync behavior</h3>
+<ul>
+<li>First connection: pull up to <strong>24 months</strong> of history (as much as each bank allows). This gives baselines right away, so alerts are useful from day one.</li>
+<li>Ongoing: <code>/transactions/sync</code> with a cursor. Handles pending → posted transitions and changes or removals made by the bank.</li>
+<li>Data Plaid provides that we use directly: <code>merchant_name</code>, <code>personal_finance_category</code>, logo URL (downloaded once and cached), location, payment channel. <strong>This reduces the work the on-device LLM has to do.</strong></li>
+<li>Connection health: detect <code>ITEM_LOGIN_REQUIRED</code> and prompt the user to re-authenticate with Plaid Link in update mode.</li>
+<li><strong>Real-time Apple Pay capture</strong> (<em>could</em>): a Shortcuts "Transaction" automation that calls our App Intent gives an instant alert even before the bank posts the charge.</li>
+</ul>
+<h3 id="44-ingestion-pipeline-all-on-device-after-the-data-arrives">4.4 Ingestion pipeline (all on device after the data arrives)</h3>
+<pre><code>Plaid sync → Normalize (Decimal, sign, currency, pending/posted) → Dedupe / pending-match
+          → Merchant cleanup (Plaid name → rules → LLM only when unclear)
+          → Categorize (user rules → Plaid category mapping → LLM for low confidence)
+          → Transfer &amp; refund matcher (e.g. &quot;CHASE CREDIT CRD AUTOPAY&quot; ↔ card payment)
+          → Recurring detector → Anomaly engine → Insight feed → Local notifications
+</code></pre>
+<hr />
+<h2 id="5-phase-1-feature-list">5. Phase 1 feature list</h2>
+<p>Priority: <strong>M</strong> = must, <strong>S</strong> = should, <strong>C</strong> = could.</p>
+<h3 id="51-onboarding">5.1 Onboarding</h3>
+<ul>
+<li><span class="badge must">Must</span>Privacy explainer ("what stays on your phone, what Plaid sees, what we never see"). Set up Face ID lock.</li>
+<li><span class="badge must">Must</span>Connect banks with Plaid Link (Wells Fargo, Chase, Citi), choose which accounts to include, and backfill history.</li>
+<li><span class="badge must">Must</span>Automatic first analysis: within a minute of connecting, show "Here's your last 3 months, and we found 14 subscriptions."</li>
+<li><span class="badge should">Should</span>Connect a brokerage account (if investments are enabled).</li>
+<li><span class="badge should">Should</span>Demo-data mode so the app can be explored before connecting a bank.</li>
+</ul>
+<h3 id="52-accounts-and-transactions">5.2 Accounts and transactions</h3>
+<ul>
+<li><span class="badge must">Must</span>Account list with balances, last sync time, and connection health (with a "Reconnect" prompt when needed).</li>
+<li><span class="badge must">Must</span>Unified transaction list with search, filters, and editing. Pending transactions are labeled.</li>
+<li><span class="badge must">Must</span>Categories (defaults mapped from Plaid categories, customizable) and rules.</li>
+<li><span class="badge must">Must</span>Transfer and credit-card-payment detection, so moving money between accounts is never counted as spending twice.</li>
+<li><span class="badge should">Should</span>Tags, notes, splits, and a "Needs review" inbox for low-confidence items.</li>
+</ul>
+<h3 id="53-analysis-the-core">5.3 Analysis (the core)</h3>
+<ul>
+<li><span class="badge must">Must</span>Period picker: week / month / quarter / year / <strong>custom</strong>, plus a custom month start (e.g. payday) and week start.</li>
+<li><span class="badge must">Must</span>Cash flow: income, spending, net, savings rate, and a trend across periods.</li>
+<li><span class="badge must">Must</span>Breakdown by category and merchant, compared with the previous period and the N-period average.</li>
+<li><span class="badge must">Must</span>Drill down from any number to the transactions behind it.</li>
+<li><span class="badge should">Should</span>Income sources and paycheck detection. Fixed vs variable vs discretionary split.</li>
+<li><span class="badge could">Could</span>Sankey diagram, spending calendar heat map.</li>
+</ul>
+<h3 id="54-subscriptions-and-recurring-payments">5.4 Subscriptions and recurring payments</h3>
+<ul>
+<li><span class="badge must">Must</span>Detection of weekly, monthly, quarterly, and annual charges, with the next expected date and amount. (Plaid's recurring endpoint can serve as a second opinion.)</li>
+<li><span class="badge must">Must</span>Subscriptions screen showing the monthly total and <strong>annualized cost</strong>.</li>
+<li><span class="badge must">Must</span><strong>Monthly Subscription Review</strong> notification on a day you choose, leading to a swipe flow: <em>Keep / Cancel / Later</em>.</li>
+<li>Choosing Cancel shows a how-to-cancel guide (bundled offline). For Apple subscriptions it opens StoreKit's manage-subscriptions sheet. The app then <strong>checks the next cycle that the charge actually stopped</strong>.</li>
+<li><span class="badge must">Must</span>Alerts for <strong>new subscriptions</strong>, <strong>free trial → paid</strong>, and <strong>price increases</strong>.</li>
+<li><span class="badge should">Should</span>Upcoming bills for the next 30 days, plus a low-balance warning using live balances.</li>
+</ul>
+<h3 id="55-alerts-and-anomaly-detection">5.5 Alerts and anomaly detection</h3>
+<p>These are computed on device after each sync and delivered as local notifications that are redacted on the lock screen by default.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Alert</th>
+<th>Detection (deterministic first, AI to explain)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Unrecognized / unexpected spend</strong></td>
+<td>Merchant never seen before, unusual location, foreign currency, unusual time</td>
+</tr>
+<tr>
+<td><strong>Duplicate charge</strong></td>
+<td>Same merchant and amount within a short window, and not a known recurring charge</td>
+</tr>
+<tr>
+<td><strong>Card-testing pattern</strong></td>
+<td>Several tiny charges ($0.01–$2) from unknown merchants</td>
+</tr>
+<tr>
+<td><strong>Fees</strong></td>
+<td>Overdraft, ATM, foreign transaction, late fee, interest charged (using Plaid's category + keywords)</td>
+</tr>
+<tr>
+<td><strong>Trial → paid</strong></td>
+<td>A new recurring merchant whose first real charge follows a $0 / $1 charge</td>
+</tr>
+<tr>
+<td><strong>Category spike</strong></td>
+<td>Spending in the period is more than baseline (median of the last 3–6 periods) × threshold <strong>and</strong> more than a minimum dollar amount</td>
+</tr>
+<tr>
+<td><strong>Merchant spike</strong></td>
+<td>A transaction above the p95 for that merchant, or more than 3× its median</td>
+</tr>
+<tr>
+<td><strong>Subscription price hike</strong></td>
+<td>Recurring amount changed by more than 5%</td>
+</tr>
+<tr>
+<td><strong>Pace alert</strong></td>
+<td>"80% of your usual dining spend by the 12th"</td>
+</tr>
+<tr>
+<td><strong>Large deposit / income missing</strong></td>
+<td>Expected paycheck didn't arrive, or an unusual deposit appeared</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><span class="badge must">Must</span>Sensitivity setting (Low / Medium / High). "This is normal" feedback tunes future alerts. Quiet hours.</li>
+<li><span class="badge must">Must</span>Insight feed that keeps every alert.</li>
+<li><span class="badge should">Should</span>Daily or weekly digest instead of individual pings (high-severity alerts still arrive right away).</li>
+</ul>
+<h3 id="56-investments-should-as-requested-optional">5.6 Investments (<em>should</em>, as requested; optional)</h3>
+<ul>
+<li><span class="badge should">Should</span>Holdings by account: ticker, shares, value, cost basis (when the broker provides it), allocation.</li>
+<li><span class="badge should">Should</span><strong>Monthly Portfolio Report</strong> notification, for example: "October: portfolio +3.2% (+$1,840). Biggest gainer NVDA +12%, biggest drop INTC −8%. Dividends $120. You added $500 in contributions."</li>
+<li>The report <strong>separates market gains from contributions and withdrawals</strong>, so new deposits aren't mistaken for growth.</li>
+<li><span class="badge should">Should</span>Optional alerts for a large single-month change in a holding (e.g. more than ±15%) and concentration (one stock over 25% of the portfolio).</li>
+<li>Prices: use <strong>Plaid's holding prices</strong> (usually the previous close). Calling a separate market-data API would reveal your tickers to another provider, so it is deferred. If it's added later, the app could request a broad set of tickers so your actual holdings aren't revealed.</li>
+<li>Informational only. Not investment advice (there will be a disclaimer).</li>
+</ul>
+<h3 id="57-budgets-and-reports">5.7 Budgets and reports</h3>
+<ul>
+<li><span class="badge should">Should</span>Monthly per-category budgets, with AI-suggested starting amounts based on history. "Safe to spend this month."</li>
+<li><span class="badge should">Should</span>Monthly recap screen and notification: top changes, subscriptions, savings, portfolio.</li>
+<li><span class="badge should">Should</span>CSV / PDF export (after re-authentication).</li>
+</ul>
+<h3 id="58-settings">5.8 Settings</h3>
+<ul>
+<li><span class="badge must">Must</span>App lock, notification redaction, hide-amounts mode, Privacy Ledger, manage or remove connections, encrypted backup, erase all data.</li>
+</ul>
+<hr />
+<h2 id="6-ai-design-embedded-local-model">6. AI design: embedded local model</h2>
+<h3 id="61-rule-math-is-deterministic-language-is-ai">6.1 Rule: "Math is deterministic, language is AI"</h3>
+<p>The LLM never calculates or invents numbers. SQL and Swift compute every figure. The LLM <strong>understands messy text, routes questions to the right query, and writes explanations</strong>. Every AI answer links to the transactions behind it.</p>
+<h3 id="62-model-strategy-for-older-phones">6.2 Model strategy for older phones</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Choice</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Runtime</strong></td>
+<td><strong>llama.cpp</strong> (Metal on GPU, called from Swift), GGUF weights</td>
+<td>Broadest device support (iPhone 11 / A13 and newer). Mature. Supports <strong>grammar / JSON-schema constrained output</strong>, which makes small models reliable.</td>
+</tr>
+<tr>
+<td><strong>Model (default)</strong></td>
+<td>Benchmark in M0: <strong>Qwen3-1.7B</strong> (Apache-2.0), <strong>Llama 3.2 1B / 3B</strong>, <strong>Gemma 3 1B</strong>, all 4-bit quantized</td>
+<td>~0.7–1.2 GB. Fits comfortably within the memory limits of 4 GB-RAM phones.</td>
+</tr>
+<tr>
+<td><strong>Tiering</strong></td>
+<td>4 GB RAM phones get the ~1B model. 6 GB+ phones get the ~1.7–3B model. Apple Intelligence devices may use <strong>Apple Foundation Models</strong> instead (saves battery).</td>
+<td>Same <code>LanguageModelProvider</code> protocol in every case</td>
+</tr>
+<tr>
+<td><strong>No-LLM fallback</strong></td>
+<td>Rules + Plaid categories + a small <strong>Core ML text classifier</strong> (a few MB)</td>
+<td>Every core feature keeps working if the LLM can't load</td>
+</tr>
+<tr>
+<td><strong>Delivery</strong></td>
+<td>Phase 1 (TestFlight): <strong>bundled in the app</strong>. App Store: download after install via <strong>Background Assets</strong>, verified by hash, so the initial download stays small.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Battery / thermal</strong></td>
+<td>Heavy batch jobs (backfill categorization) run in <code>BGProcessingTask</code> with <code>requiresExternalPower</code>. Interactive requests are short and capped.</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Quality</strong></td>
+<td>An <strong>eval set</strong> of ≥500 labeled real merchant strings and ~100 "Ask" questions picks the model and catches regressions. A LoRA fine-tune for categorization is optional later.</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Minimum iOS:</strong> iOS 17 (iPhone XS / XR and newer), to be confirmed by the M0 benchmark. If the oldest phones are too slow, the floor becomes iPhone 11 / iOS 18.</p>
+<h3 id="63-making-a-small-model-reliable">6.3 Making a small model reliable</h3>
+<ul>
+<li><strong>Constrained output:</strong> every AI task outputs a <code>Codable</code> struct enforced by a JSON-schema grammar, so the output is never malformed.</li>
+<li><strong>Narrow tasks:</strong> one small, focused prompt per job (clean up a merchant name, categorize, classify a question, phrase a summary), not one general chatbot.</li>
+<li><strong>"Ask" pipeline:</strong> question → <strong>intent + slots</strong> (constrained JSON: <code>{intent: compareSpending, category: "Dining", range: "last_month", vs: "avg_6m"}</code>) → deterministic query → numbers → the LLM writes 1–3 sentences around the <strong>given</strong> numbers. If the confidence is low, the app shows a "Did you mean…" chip instead of guessing.</li>
+<li><strong>Caching:</strong> results for each raw merchant string are cached, so the LLM only runs on new merchants. In practice that's a few per day after the backfill.</li>
+</ul>
+<h3 id="64-ai-features-phase-1">6.4 AI features (Phase 1)</h3>
+<ol>
+<li><strong>Merchant cleanup</strong> when Plaid's name is missing or unclear.</li>
+<li><strong>Categorization of uncertain transactions plus learning:</strong> after you correct something, it suggests "Always categorize X as Y?"</li>
+<li><strong>"Ask" your money:</strong> "How much did we spend on groceries this quarter vs last?", "Which subscriptions went up this year?", "Why was October high?", "How did my stocks do last month?"</li>
+<li><strong>Narrative summaries</strong> for the period screen, the monthly recap, and the portfolio report.</li>
+<li><strong>Alert explanations:</strong> a one-line <em>why</em> plus a suggested action.</li>
+<li><strong>Subscription review helper:</strong> groups overlapping services ("3 streaming services: $46/mo"), flags upcoming annual renewals, and calculates potential savings.</li>
+<li><strong>Budget suggestions</strong> from your history.</li>
+</ol>
+<h3 id="65-later">6.5 Later</h3>
+<p>Cash-flow forecast with an explanation, goal coaching, Siri / App Intents ("How much have I spent on dining this month?"), receipt itemization, and a LoRA fine-tune of the categorization model.</p>
+<hr />
+<h2 id="7-ease-of-use">7. Ease of use</h2>
+<ul>
+<li><strong>Connect once:</strong> after Plaid Link everything is automatic, and the first insights appear within a minute.</li>
+<li><strong>One-glance home:</strong> "This month: $X spent · $Y left · 3 things need attention."</li>
+<li><strong>Two-minute weekly review queue:</strong> swipe through uncertain categorizations, alerts, and subscription decisions.</li>
+<li><strong>Calm notifications:</strong> digests by default, instant only for high-severity alerts, quiet hours.</li>
+<li><strong>Explainable numbers:</strong> tap any number to see its transactions.</li>
+<li><strong>Widgets</strong> (<em>should</em>): month-to-date spend, next bill. They respect hide-amounts mode.</li>
+<li><strong>Accessibility:</strong> Dynamic Type, VoiceOver on charts (audio graphs), color-blind-safe palette.</li>
+</ul>
+<hr />
+<h2 id="8-technical-architecture">8. Technical architecture</h2>
+<pre><code>iOS app (SwiftUI, iOS 17+)
+├── Features/       Home · Transactions · Analysis · Subscriptions · Investments · Insights · Ask · Settings
+├── Domain/         Period math, RecurringDetector, AnomalyEngine, PortfolioReport, Budgets (pure Swift, unit-tested)
+├── Data/           GRDB + SQLCipher, migrations, repositories, FTS5 search
+├── Sync/           SyncProvider protocol → PlaidProvider (via relay) · SimpleFINProvider (1.5) · MockProvider
+├── Intelligence/   LanguageModelProvider → LlamaCppProvider · AppleFMProvider · NoneProvider; grammars; eval harness
+├── Notifications/  Local scheduling, digests, redaction; silent-push handler → sync
+├── Security/       KeyManager, AppLock, NetworkGateway + Privacy Ledger, App Attest
+└── Background/     BGAppRefresh (sync), BGProcessing (categorization, recompute)
+
+relay/ (TypeScript, Cloudflare Worker, ~300 lines)
+└── link-token · exchange · sync proxy · investments · item/remove · webhook → APNs silent push
+</code></pre>
+<ul>
+<li>Money is stored as <code>Decimal</code> plus a currency code. Swift 6 strict concurrency. Swift Charts.</li>
+<li>Testing: <code>MockProvider</code> with a synthetic data generator (realistic merchants, subscriptions, anomalies, holdings), Plaid <strong>Sandbox</strong> for integration tests, unit tests for every detector, and the LLM eval harness.</li>
+</ul>
+<hr />
+<h2 id="9-milestones">9. Milestones</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Milestone</th>
+<th>Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>M0</strong></td>
+<td>Spikes + decisions (≈1–2 wks)</td>
+<td><strong>LLM benchmark</strong> on the oldest target iPhone (speed, memory, accuracy). Plaid account + tier check for Chase/WF/Citi + Investments. Wireframes for core screens.</td>
+</tr>
+<tr>
+<td><strong>M1</strong></td>
+<td>Secure foundation + sync</td>
+<td>Encrypted DB, app lock, relay deployed to your account, Plaid Link, transaction sync with backfill, accounts and transactions screens</td>
+</tr>
+<tr>
+<td><strong>M2</strong></td>
+<td>Analysis</td>
+<td>Period engine, cash flow, breakdowns, comparisons, drill-down, transfer detection</td>
+</tr>
+<tr>
+<td><strong>M3</strong></td>
+<td>Subscriptions</td>
+<td>Recurring detector, subscriptions screen, monthly review flow, price-hike / new-subscription alerts</td>
+</tr>
+<tr>
+<td><strong>M4</strong></td>
+<td>Alerts</td>
+<td>Anomaly engine, insight feed, webhook → silent push → sync → local notifications, settings</td>
+</tr>
+<tr>
+<td><strong>M5</strong></td>
+<td>On-device AI</td>
+<td>llama.cpp integration, model tiering, merchant cleanup, categorization + learning, Ask, narratives, evals</td>
+</tr>
+<tr>
+<td><strong>M6</strong></td>
+<td>Investments (optional)</td>
+<td>Holdings sync, investments screen, monthly portfolio report</td>
+</tr>
+<tr>
+<td><strong>M7</strong></td>
+<td>Household beta</td>
+<td>Polish, accessibility, widgets, Privacy Ledger, security review, <strong>TestFlight</strong> for household</td>
+</tr>
+<tr>
+<td><em>Later</em></td>
+<td>App Store track</td>
+<td>Plaid production approval, our own hosted relay + audit, Background Assets model delivery, privacy policy, pricing (Plaid charges per connection), SimpleFIN adapter, statement import</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="10-open-questions-round-2">10. Open questions (round 2)</h2>
+<ol>
+<li><strong>Household meaning:</strong> (a) one phone that shows the whole household's accounts, or (b) two or more phones (you + partner) seeing the <strong>same shared data</strong>? Option (b) needs end-to-end encrypted sync (CloudKit encrypted fields + sharing), which I'd put in Phase 1.5.</li>
+<li><strong>Brokerages:</strong> where are the stocks held (Chase / J.P. Morgan, WellsTrade, Fidelity, Schwab, Robinhood…)? Coverage differs by broker.</li>
+<li><strong>Relay hosting for now:</strong> OK to run the small relay in <strong>your own</strong> Cloudflare (free) account? It's the most private option until the App Store phase.</li>
+<li><strong>Oldest iPhone</strong> in your household that must be supported? This sets the model size and the minimum iOS version.</li>
+<li><strong>Apple Developer Program</strong> ($99/yr): do you already have one? It's needed for TestFlight, push notifications, and App Attest.</li>
+</ol>
+<hr />
+<h2 id="11-risks">11. Risks</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Plaid tier limits, pricing, or bank OAuth availability</td>
+<td>Check in M0. <code>SyncProvider</code> abstraction. SimpleFIN as a fallback.</td>
+</tr>
+<tr>
+<td>US bank data-access rules changing (CFPB §1033, bank fees)</td>
+<td>Use official OAuth channels through Plaid. Keep the provider swappable.</td>
+</tr>
+<tr>
+<td>Small LLM accuracy on older phones</td>
+<td>Plaid categories first, constrained outputs, narrow tasks, rules that learn, eval harness, no-LLM fallback</td>
+</tr>
+<tr>
+<td>App size (~1 GB model)</td>
+<td>Bundled for TestFlight. Background Assets download for the App Store. 1B model on low-RAM phones.</td>
+</tr>
+<tr>
+<td>Silent pushes delayed or dropped by iOS</td>
+<td>Also sync on open and in background refresh, plus pull to refresh. Set expectations in the UI.</td>
+</tr>
+<tr>
+<td>The relay is a new attack surface</td>
+<td>Stateless design, no stored tokens or data, App Attest, pinned TLS, small auditable code, secret rotation</td>
+</tr>
+<tr>
+<td>Recurring / anomaly false positives</td>
+<td>Confidence scores, minimum dollar amounts, "this is normal" feedback, sensitivity setting</td>
+</tr>
+<tr>
+<td>Portfolio numbers misread as advice</td>
+<td>Clear "informational only" wording. Contributions separated from market gains.</td>
+</tr>
+</tbody>
+</table></div>
+</main>
+</div>
+</body>
+</html>
