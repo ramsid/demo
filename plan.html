@@ -54,6 +54,8 @@ li { margin:4px 0; }
 .badge.should { color:var(--should); background:var(--should-bg); }
 .badge.could { color:var(--could); background:var(--could-bg); }
 hr { border:none; }
+details { margin:12px 0; border:1px solid var(--border); border-radius:10px; padding:8px 14px; }
+summary { cursor:pointer; font-weight:600; color:var(--muted); }
 @media (max-width: 860px) {
   .layout { grid-template-columns:1fr; padding:16px; gap:16px; }
   nav { position:static; max-height:none; }
@@ -69,17 +71,46 @@ hr { border:none; }
 <div class="layout">
 <nav aria-label="Contents">
   <p class="title">Ledgerly · Phase 1</p>
-  <p class="sub">Private finance tracker for iOS. Draft v2 for review.</p>
-  <ul><li><a href="#1-goals-and-non-goals">1. Goals and non-goals</a></li><li><a href="#2-monarch-money-as-reference-what-to-borrow-and-what-to-change">2. Monarch Money as reference: what to borrow and what to change</a></li><li><a href="#3-security-and-privacy-priority-1">3. Security and privacy (priority #1)</a></li><li><a href="#4-automatic-sync">4. Automatic sync</a></li><li><a href="#5-phase-1-feature-list">5. Phase 1 feature list</a></li><li><a href="#6-ai-design-embedded-local-model">6. AI design: embedded local model</a></li><li><a href="#7-ease-of-use">7. Ease of use</a></li><li><a href="#8-technical-architecture">8. Technical architecture</a></li><li><a href="#9-milestones">9. Milestones</a></li><li><a href="#10-open-questions-round-2">10. Open questions (round 2)</a></li><li><a href="#11-risks">11. Risks</a></li></ul>
+  <p class="sub">Private finance tracker for iOS. Draft v3 for review.</p>
+  <ul><li><a href="#1-goals-and-non-goals">1. Goals and non-goals</a></li><li><a href="#2-monarch-money-as-reference-what-to-borrow-and-what-to-change">2. Monarch Money as reference: what to borrow and what to change</a></li><li><a href="#3-security-and-privacy-priority-1">3. Security and privacy (priority #1)</a></li><li><a href="#4-automatic-sync">4. Automatic sync</a></li><li><a href="#5-phase-1-feature-list">5. Phase 1 feature list</a></li><li><a href="#6-ai-design-embedded-local-model">6. AI design: embedded local model</a></li><li><a href="#7-ease-of-use">7. Ease of use</a></li><li><a href="#8-technical-architecture">8. Technical architecture</a></li><li><a href="#9-milestones">9. Milestones</a></li><li><a href="#10-open-questions-round-3">10. Open questions (round 3)</a></li><li><a href="#11-risks">11. Risks</a></li><li><a href="#12-phase-2-accounts-encrypted-sync-and-web-app-designed-now-built-in-phase-2">12. Phase 2: accounts, encrypted sync, and web app (designed now, built in Phase 2)</a></li></ul>
 </nav>
 <main>
-<h1 id="private-finance-tracker-for-ios-phase-1-plan-v2-for-review">Private Finance Tracker for iOS: Phase 1 Plan (v2, for review)</h1>
+<h1 id="private-finance-tracker-for-ios-phase-1-plan-v3-for-review">Private Finance Tracker for iOS: Phase 1 Plan (v3, for review)</h1>
 <blockquote>
-<p>Status: <strong>draft v2 for review</strong>. No code yet.<br />
+<p>Status: <strong>draft v3 for review</strong>. No code yet.<br />
 Working name: <strong>Ledgerly</strong> (placeholder)<br />
-Guiding principle: <strong>your financial data is stored and analyzed only on your devices. The only things that ever see it are your bank and the sync provider you connect. We never do.</strong>  </p>
+Guiding principle: <strong>your financial data is stored and analyzed only on your devices. The only things that ever see it are your bank and the sync provider you connect. We never do.</strong><br />
+Your settings (rules, categories, linked accounts) can follow you to a new phone or the web, but they are <strong>locked with a key only your devices have</strong> (§12).  </p>
 </blockquote>
-<h3 id="what-changed-in-v2-based-on-your-answers">What changed in v2 (based on your answers)</h3>
+<h3 id="what-changed-in-v3-based-on-your-answers">What changed in v3 (based on your answers)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Your answer</th>
+<th>Effect on the plan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Preferences, rules, and linked accounts should follow the user to a new phone, and to a <strong>web app</strong> later (Phase 2)</td>
+<td>New <strong>§12: Accounts, encrypted sync, and web app</strong>. User accounts with passkeys. Settings are stored on our server in an <strong>end-to-end encrypted vault</strong> that only the user's devices can open. Transactions are still never stored on the server. Phase 1 is built so this can be added without a rewrite (§8).</td>
+</tr>
+<tr>
+<td>Brokerages: <strong>Fidelity, Schwab, Robinhood</strong></td>
+<td>Added to the Plaid coverage checks (§4.1). Investments stay a <em>should</em>.</td>
+</tr>
+<tr>
+<td>Oldest phone: <strong>iPhone 14</strong></td>
+<td>Every supported phone has 6 GB of memory, so <strong>one model tier</strong> with a stronger ~2–4B model. Minimum iOS 18 (§6.2).</td>
+</tr>
+<tr>
+<td>No Apple Developer account until development is done</td>
+<td>Development uses the Simulator + a free Apple ID + Plaid Sandbox. Features that need the paid account are listed with workarounds (§9.1).</td>
+</tr>
+</tbody>
+</table></div>
+<details>
+<summary>What changed in v2</summary>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -110,6 +141,7 @@ Guiding principle: <strong>your financial data is stored and analyzed only on yo
 </tr>
 </tbody>
 </table></div>
+</details>
 <hr />
 <h2 id="1-goals-and-non-goals">1. Goals and non-goals</h2>
 <h3 id="goals">Goals</h3>
@@ -179,11 +211,11 @@ Guiding principle: <strong>your financial data is stored and analyzed only on yo
 </tr>
 <tr>
 <td>Partner collaboration</td>
-<td>🟡 Phase 1.5: household sharing with end-to-end encryption (see open question 1)</td>
+<td>🟡 Phase 2: household sharing built on the same encrypted vault (§12)</td>
 </tr>
 <tr>
 <td>Web app</td>
-<td>❌ On-device by design</td>
+<td>🟡 <strong>Phase 2</strong>: settings and accounts visible on the web. Transactions are fetched live and analyzed in the browser, never stored on the server (§12.3).</td>
 </tr>
 </tbody>
 </table></div>
@@ -191,8 +223,8 @@ Guiding principle: <strong>your financial data is stored and analyzed only on yo
 <h2 id="3-security-and-privacy-priority-1">3. Security and privacy (priority #1)</h2>
 <h3 id="31-principles">3.1 Principles</h3>
 <ol>
-<li><strong>Data lives on the device.</strong> Transactions, balances, holdings, categories, and AI outputs are stored only in the app's encrypted database.</li>
-<li><strong>Minimal, stateless server.</strong> The only server component is a relay that adds the Plaid secret to requests. It <strong>stores no financial data, keeps no request or response bodies in logs, and has no database of transactions</strong> (§4.2).</li>
+<li><strong>Financial data lives on the device.</strong> Transactions, balances, and holdings are stored only in the app's encrypted database. They are never stored on a server.</li>
+<li><strong>Minimal server that can't read your data.</strong> In Phase 1 the server is a relay that adds the Plaid secret to requests (§4.2). In Phase 2 it also holds each user's <strong>encrypted settings vault</strong>, which it cannot open (§12). It <strong>never stores transactions, balances, or holdings, and never logs request or response bodies.</strong></li>
 <li><strong>No third-party SDKs</strong> except Plaid Link (required for bank login). No analytics, crash, or ad SDKs.</li>
 <li><strong>The LLM is sandboxed.</strong> It runs fully on device, reads data only through read-only tools, and has no network access. Any change it proposes needs your tap.</li>
 <li><strong>Transparency.</strong> The "Privacy Ledger" screen lists every network call: when, which host, what kind (for example "Plaid: transactions sync"), and how many bytes. The App Store privacy label is set up for "Data Not Collected" by us. The fact that Plaid is a data processor is disclosed.</li>
@@ -212,7 +244,7 @@ Guiding principle: <strong>your financial data is stored and analyzed only on yo
 </tr>
 <tr>
 <td>Plaid access tokens</td>
-<td><strong>Kept only on the device</strong> in Keychain (<code>ThisDeviceOnly</code>). The relay never stores them. The device sends the token with each request, and the relay forwards it.</td>
+<td>Phase 1: <strong>kept only on the device</strong> in Keychain (<code>ThisDeviceOnly</code>). The device sends the token with each request, and the relay forwards it without storing it. Phase 2: also kept inside the <strong>end-to-end encrypted vault</strong>, so a new phone or the web can use linked accounts without linking the banks again. The server stores them only in a form it can't decrypt.</td>
 </tr>
 <tr>
 <td>App access</td>
@@ -264,6 +296,7 @@ Guiding principle: <strong>your financial data is stored and analyzed only on yo
 <ul>
 <li><strong>Lost or stolen phone:</strong> iOS passcode + Data Protection + app lock + Keychain <code>ThisDeviceOnly</code> tokens. Erasing the app revokes Plaid access.</li>
 <li><strong>Relay compromise:</strong> an attacker would get the Plaid secret but <strong>no stored data or tokens</strong>. Without a device's access token they can't pull any data. Mitigations: rotate the secret, use App Attest, set alerting.</li>
+<li><strong>Vault database stolen (Phase 2):</strong> the attacker gets only encrypted blobs. The keys are on users' devices and in their passkeys, never on the server.</li>
 <li><strong>Plaid / bank:</strong> they see the data, which is unavoidable for automatic sync. This is disclosed clearly and access can be revoked from the app.</li>
 <li><strong>Malicious merchant text:</strong> treated as data, never as instructions. Read-only tools.</li>
 <li><strong>Shoulder-surfing:</strong> redacted notifications, blur, hide-amounts mode.</li>
@@ -326,7 +359,16 @@ Guiding principle: <strong>your financial data is stored and analyzed only on yo
 <blockquote>
 <p>M0 check: confirm that Chase, Wells Fargo, and Citi OAuth connections plus the Investments product are available on Plaid's free/limited tier for a personal account, and note the current per-connection pricing for App Store planning. US bank data-access rules (CFPB §1033, bank fees to aggregators) are still changing, so this is tracked as a risk.  </p>
 </blockquote>
+<p><strong>Brokerages: Fidelity, Schwab, Robinhood.</strong> All three are expected to work with Plaid Investments (holdings + investment transactions), but this has to be confirmed in M0 together with:
+- whether <strong>cost basis</strong> is returned (needed for gain/loss), and how fresh the prices are (usually the previous close)
+- whether each brokerage is available on the free/limited tier or needs production access
+- Fidelity specifically: Fidelity limits third-party access to its own approved connections, so the M0 check confirms it goes through Plaid's official channel</p>
+<p>If one of them is missing, the fallback is a <em>balance-only</em> view for that brokerage, with full holdings once a provider covers it.</p>
 <h3 id="42-sync-relay-design-stateless-zero-knowledge-as-far-as-it-can-be">4.2 Sync relay design (stateless, zero-knowledge as far as it can be)</h3>
+<blockquote>
+<p><strong>In plain English:</strong> to fetch your transactions, Plaid needs two things: a <strong>"permission slip"</strong> that you create when you log in to your bank (the <em>access token</em>), and the <strong>app's ID card</strong> (the <em>Plaid secret</em>). The ID card can't be stored in the app, because anyone could extract it from the app file. So we run a tiny <strong>"mail-forwarding office"</strong> (the <em>relay</em>): your phone hands it a sealed request with your permission slip, the office stamps on the app's ID card, sends it to Plaid, and passes Plaid's reply straight back to your phone. The office <strong>doesn't make copies, doesn't keep a filing cabinet, and doesn't keep your permission slip</strong>. The only thing it remembers is your phone's "doorbell" address, so that when Plaid says "new transactions are ready" it can ring your phone. The ring carries no information. Your phone then fetches the new transactions itself.  </p>
+<p><strong>"Running it in your own Cloudflare account"</strong> means this office runs on a free Cloudflare account that <strong>you</strong> sign up for and own, not one that belongs to a company. You control it, can see it, and can shut it off. Cloudflare Workers is a service that runs small programs like this for free at personal-use volumes. Setup is a one-time copy-and-deploy step that I'll script.  </p>
+</blockquote>
 <pre><code> iPhone (encrypted DB, access tokens in Keychain)
    │  1. Link: Plaid Link SDK on device → public_token
    │  2. POST /exchange {public_token}        ──► Relay adds client_id + secret ──► Plaid
@@ -491,16 +533,16 @@ Guiding principle: <strong>your financial data is stored and analyzed only on yo
 <tr>
 <td><strong>Runtime</strong></td>
 <td><strong>llama.cpp</strong> (Metal on GPU, called from Swift), GGUF weights</td>
-<td>Broadest device support (iPhone 11 / A13 and newer). Mature. Supports <strong>grammar / JSON-schema constrained output</strong>, which makes small models reliable.</td>
+<td>Runs well on iPhone 14 (A15) and newer. Mature. Supports <strong>grammar / JSON-schema constrained output</strong>, which makes small models reliable.</td>
 </tr>
 <tr>
 <td><strong>Model (default)</strong></td>
-<td>Benchmark in M0: <strong>Qwen3-1.7B</strong> (Apache-2.0), <strong>Llama 3.2 1B / 3B</strong>, <strong>Gemma 3 1B</strong>, all 4-bit quantized</td>
-<td>~0.7–1.2 GB. Fits comfortably within the memory limits of 4 GB-RAM phones.</td>
+<td>Benchmark on an <strong>iPhone 14</strong> in M0: <strong>Qwen3-4B</strong> and <strong>Qwen3-1.7B</strong> (Apache-2.0), <strong>Llama 3.2 3B</strong>, <strong>Gemma 3 4B</strong>, all 4-bit quantized</td>
+<td>iPhone 14 has 6 GB of RAM, so a ~2–2.5 GB model fits. Pick the most accurate one that answers in under ~2 s.</td>
 </tr>
 <tr>
 <td><strong>Tiering</strong></td>
-<td>4 GB RAM phones get the ~1B model. 6 GB+ phones get the ~1.7–3B model. Apple Intelligence devices may use <strong>Apple Foundation Models</strong> instead (saves battery).</td>
+<td><strong>One tier</strong> (every supported phone has ≥ 6 GB). Apple Intelligence phones (15 Pro and newer) <em>may</em> use <strong>Apple Foundation Models</strong> instead to save battery and storage, if the evals show equal quality.</td>
 <td>Same <code>LanguageModelProvider</code> protocol in every case</td>
 </tr>
 <tr>
@@ -525,7 +567,7 @@ Guiding principle: <strong>your financial data is stored and analyzed only on yo
 </tr>
 </tbody>
 </table></div>
-<p><strong>Minimum iOS:</strong> iOS 17 (iPhone XS / XR and newer), to be confirmed by the M0 benchmark. If the oldest phones are too slow, the floor becomes iPhone 11 / iOS 18.</p>
+<p><strong>Minimum:</strong> <strong>iOS 18, iPhone 14 or newer.</strong> At launch the app checks for ≥ 6 GB RAM. On anything older, AI features turn off and the app keeps working with rules and Plaid categories.</p>
 <h3 id="63-making-a-small-model-reliable">6.3 Making a small model reliable</h3>
 <ul>
 <li><strong>Constrained output:</strong> every AI task outputs a <code>Codable</code> struct enforced by a JSON-schema grammar, so the output is never malformed.</li>
@@ -558,7 +600,7 @@ Guiding principle: <strong>your financial data is stored and analyzed only on yo
 </ul>
 <hr />
 <h2 id="8-technical-architecture">8. Technical architecture</h2>
-<pre><code>iOS app (SwiftUI, iOS 17+)
+<pre><code>iOS app (SwiftUI, iOS 18+, iPhone 14+)
 ├── Features/       Home · Transactions · Analysis · Subscriptions · Investments · Insights · Ask · Settings
 ├── Domain/         Period math, RecurringDetector, AnomalyEngine, PortfolioReport, Budgets (pure Swift, unit-tested)
 ├── Data/           GRDB + SQLCipher, migrations, repositories, FTS5 search
@@ -573,6 +615,11 @@ relay/ (TypeScript, Cloudflare Worker, ~300 lines)
 </code></pre>
 <ul>
 <li>Money is stored as <code>Decimal</code> plus a currency code. Swift 6 strict concurrency. Swift Charts.</li>
+<li><strong>Phase 1 groundwork for Phase 2 sync and the web app</strong>, so it isn't a rewrite later:</li>
+<li>The database is split from day one into <strong>"vault" tables</strong> (settings, categories, rules, tags, budgets, alert preferences, subscription decisions, linked-account details, per-transaction edits) and <strong>"cache" tables</strong> (transactions, balances, holdings: always rebuildable from Plaid).</li>
+<li>Every vault change is recorded as a small <strong>change record</strong> (UUID, timestamp, field), so it can be synced and merged later.</li>
+<li>Rules and categories are stored as <strong>portable JSON</strong> that the web app can also run.</li>
+<li>Detectors and the rules engine get <strong>shared JSON test fixtures</strong>, so the Swift (iOS) and TypeScript (web) versions can be checked to give identical results.</li>
 <li>Testing: <code>MockProvider</code> with a synthetic data generator (realistic merchants, subscriptions, anomalies, holdings), Plaid <strong>Sandbox</strong> for integration tests, unit tests for every detector, and the LLM eval harness.</li>
 </ul>
 <hr />
@@ -589,7 +636,7 @@ relay/ (TypeScript, Cloudflare Worker, ~300 lines)
 <tr>
 <td><strong>M0</strong></td>
 <td>Spikes + decisions (≈1–2 wks)</td>
-<td><strong>LLM benchmark</strong> on the oldest target iPhone (speed, memory, accuracy). Plaid account + tier check for Chase/WF/Citi + Investments. Wireframes for core screens.</td>
+<td><strong>LLM benchmark</strong> on an iPhone 14 (speed, memory, accuracy). Plaid account + tier check for Chase/WF/Citi and Fidelity/Schwab/Robinhood. Wireframes for core screens.</td>
 </tr>
 <tr>
 <td><strong>M1</strong></td>
@@ -627,20 +674,58 @@ relay/ (TypeScript, Cloudflare Worker, ~300 lines)
 <td>Polish, accessibility, widgets, Privacy Ledger, security review, <strong>TestFlight</strong> for household</td>
 </tr>
 <tr>
+<td><strong>Phase 2</strong></td>
+<td>Accounts, sync, web</td>
+<td>Passkey sign-in, encrypted vault sync across phones, household sharing, web app (§12), statement import, SimpleFIN adapter</td>
+</tr>
+<tr>
 <td><em>Later</em></td>
 <td>App Store track</td>
-<td>Plaid production approval, our own hosted relay + audit, Background Assets model delivery, privacy policy, pricing (Plaid charges per connection), SimpleFIN adapter, statement import</td>
+<td>Plaid production approval, our own hosted backend + independent security audit, Background Assets model delivery, privacy policy, pricing (Plaid charges per connection)</td>
 </tr>
 </tbody>
 </table></div>
+<h3 id="91-developing-before-the-apple-developer-account-exists">9.1 Developing before the Apple Developer account exists</h3>
+<p>Most of Phase 1 can be built and tested with the <strong>Xcode Simulator, a free Apple ID on your own iPhone, and Plaid Sandbox</strong> (fake banks, free). A few features need the paid account ($99/yr), so they get workarounds until you enroll:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Needs the paid account</th>
+<th>Workaround during development</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Push notifications</strong> (relay waking the phone when new transactions arrive)</td>
+<td>Sync on app open, background refresh, and pull to refresh. Push is switched on after enrolling.</td>
+</tr>
+<tr>
+<td><strong>App Attest</strong> (proves requests to the relay come from the real app)</td>
+<td>A per-device shared key in development builds only</td>
+</tr>
+<tr>
+<td><strong>Passkeys / Sign in with Apple / iCloud</strong> (Phase 2)</td>
+<td>Not needed in Phase 1</td>
+</tr>
+<tr>
+<td><strong>Universal links</strong> (may be needed for some banks' OAuth login to return to the app)</td>
+<td>Plaid Sandbox and the Simulator. Real Chase/WF/Citi logins are tested after enrolling.</td>
+</tr>
+<tr>
+<td><strong>TestFlight</strong> (installing on household members' phones)</td>
+<td>Free-Apple-ID installs on your own phone, which expire every 7 days and must be reinstalled from Xcode</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Recommendation:</strong> enroll <strong>before M4</strong> (alerts) or before the first test with your real bank accounts, whichever comes first, because the last two milestones depend on those features. Local notifications, background tasks, and the on-device LLM all work without the paid account.</p>
 <hr />
-<h2 id="10-open-questions-round-2">10. Open questions (round 2)</h2>
+<h2 id="10-open-questions-round-3">10. Open questions (round 3)</h2>
 <ol>
-<li><strong>Household meaning:</strong> (a) one phone that shows the whole household's accounts, or (b) two or more phones (you + partner) seeing the <strong>same shared data</strong>? Option (b) needs end-to-end encrypted sync (CloudKit encrypted fields + sharing), which I'd put in Phase 1.5.</li>
-<li><strong>Brokerages:</strong> where are the stocks held (Chase / J.P. Morgan, WellsTrade, Fidelity, Schwab, Robinhood…)? Coverage differs by broker.</li>
-<li><strong>Relay hosting for now:</strong> OK to run the small relay in <strong>your own</strong> Cloudflare (free) account? It's the most private option until the App Store phase.</li>
-<li><strong>Oldest iPhone</strong> in your household that must be supported? This sets the model size and the minimum iOS version.</li>
-<li><strong>Apple Developer Program</strong> ($99/yr): do you already have one? It's needed for TestFlight, push notifications, and App Attest.</li>
+<li><strong>Household:</strong> (a) one phone that shows the whole household's accounts, or (b) two or more people each with their own login seeing <strong>shared</strong> data? Both work with the vault design. (b) adds sharing keys between members in Phase 2.</li>
+<li><strong>Transaction history on a new phone:</strong> Plaid typically provides <strong>up to ~24 months</strong> of history. Should we also keep an <strong>encrypted archive</strong> of older history in the vault, so years-long trends survive switching phones? It would still be unreadable to the server, but transaction data would then be stored there in encrypted form, which goes beyond "never stored on a server".</li>
+<li><strong>Recovery:</strong> if a user loses all their devices <strong>and</strong> their passkey <strong>and</strong> their recovery key, their settings can't be recovered. That is the cost of true end-to-end encryption, and re-linking banks still works. Is that acceptable, or do you want a server-readable "easy recovery" option?</li>
+<li><strong>Web app scope in Phase 2:</strong> settings + accounts + dashboards only, or also the "Ask" AI in the browser? That needs a WebGPU model download (§12.3).</li>
+<li>Is <strong>Cloudflare</strong> OK as the Phase 1 host (now that it's explained in §4.2)?</li>
 </ol>
 <hr />
 <h2 id="11-risks">11. Risks</h2>
@@ -684,8 +769,104 @@ relay/ (TypeScript, Cloudflare Worker, ~300 lines)
 <td>Portfolio numbers misread as advice</td>
 <td>Clear "informational only" wording. Contributions separated from market gains.</td>
 </tr>
+<tr>
+<td>A brokerage (e.g. Fidelity) not available through Plaid</td>
+<td>Check in M0. Balance-only fallback. Second provider later.</td>
+</tr>
+<tr>
+<td>No developer account delays push testing</td>
+<td>Workarounds in §9.1. Enroll before M4.</td>
+</tr>
+<tr>
+<td>E2E encryption makes account recovery harder (Phase 2)</td>
+<td>Synced passkeys + a printed recovery key + clear onboarding. Bank links can always be re-created.</td>
+</tr>
+<tr>
+<td>Keeping iOS and web logic consistent (Phase 2)</td>
+<td>Rules stored as data (JSON), shared test fixtures, one spec for every detector</td>
+</tr>
 </tbody>
 </table></div>
+<hr />
+<h2 id="12-phase-2-accounts-encrypted-sync-and-web-app-designed-now-built-in-phase-2">12. Phase 2: accounts, encrypted sync, and web app (designed now, built in Phase 2)</h2>
+<h3 id="121-what-follows-the-user-and-what-doesnt">12.1 What follows the user, and what doesn't</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Where it lives</th>
+<th>On a new phone or the web</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Profile, settings, alert preferences, notification schedule</td>
+<td>Encrypted vault on the server</td>
+<td>✅ Restored immediately</td>
+</tr>
+<tr>
+<td>Categories, <strong>manual rules</strong>, tags, budgets</td>
+<td>Encrypted vault</td>
+<td>✅ Restored immediately</td>
+</tr>
+<tr>
+<td><strong>Linked banks and accounts</strong> (bank name, nickname, last 4 digits, type) + Plaid access tokens</td>
+<td>Encrypted vault</td>
+<td>✅ Accounts appear and sync <strong>without linking the banks again</strong></td>
+</tr>
+<tr>
+<td>Subscription decisions (keep / cancel / "this is normal" feedback)</td>
+<td>Encrypted vault</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Edits to individual transactions (category change, note, split), keyed by Plaid transaction ID</td>
+<td>Encrypted vault</td>
+<td>✅ Applied again when transactions are re-fetched</td>
+</tr>
+<tr>
+<td>Merchant-cleanup / AI categorization cache</td>
+<td>Encrypted vault</td>
+<td>✅ The web gets the phone's AI results for free</td>
+</tr>
+<tr>
+<td><strong>Transactions, balances, holdings</strong></td>
+<td><strong>Device cache only.</strong> Never on the server.</td>
+<td>🔄 Re-fetched fresh from Plaid (~24 months available)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="122-how-the-encryption-works">12.2 How the encryption works</h3>
+<blockquote>
+<p><strong>In plain English:</strong> the server holds a <strong>locked box</strong> for each user. The box is locked and unlocked <strong>only on your devices</strong>. The server stores the box but has no key, so even we (or a hacker who steals the database) can't see your rules, accounts, or bank permission slips.  </p>
+</blockquote>
+<ul>
+<li><strong>Sign-in:</strong> <strong>passkeys</strong> (Face ID / Touch ID, no passwords), optionally Sign in with Apple. Passkeys sync through iCloud Keychain or Google Password Manager, which is what makes a new phone easy.</li>
+<li><strong>Vault key:</strong> a random 256-bit key encrypts every vault item on the device before upload (AES-256-GCM).</li>
+<li><strong>Unlocking the vault key on a new device:</strong>
+  1. <strong>Passkey PRF</strong>, the main path: the passkey itself produces a secret that unlocks the vault key. Works on iOS 18+ and modern Chrome / Safari / Edge.
+  2. <strong>Recovery key</strong>, the backup path: a 24-word code shown once at setup ("print or save this").
+  3. <strong>An existing logged-in device</strong> approves the new device (scan a QR code).</li>
+<li><strong>Sync:</strong> the change records from §8 are uploaded and downloaded encrypted. Conflicts are resolved per field (last edit wins), with a history view for rules.</li>
+<li><strong>Household:</strong> each member has their own vault and passkey. A shared "household vault" key is wrapped for each member.</li>
+</ul>
+<p><strong>Alternative considered (not recommended):</strong> ordinary server-side storage that the server can read. Password reset and debugging would be simpler, but it breaks the privacy promise and makes our server a valuable target.</p>
+<h3 id="123-web-app">12.3 Web app</h3>
+<ul>
+<li><strong>Login:</strong> passkey → the vault is decrypted <strong>inside the browser</strong> (WebCrypto). The server never sees it decrypted.</li>
+<li><strong>Data:</strong> the browser asks the backend to fetch fresh transactions from Plaid using the decrypted access token (the same relay flow). <strong>Analysis runs in the browser.</strong> Nothing is stored on the server. Optional encrypted cache in the browser, wiped on logout.</li>
+<li><strong>Features:</strong> dashboards, period analysis, transactions, rules and categories editing, subscriptions, linked accounts, settings. Edits sync back to the phone through the vault.</li>
+<li><strong>AI on the web:</strong> merchant names and categories come from the phone's synced AI cache. A browser-based "Ask" (WebGPU model, ~1–2 GB download) is optional. See open question 4.</li>
+<li><strong>Web security:</strong> strict Content Security Policy, no third-party scripts except Plaid Link, Subresource Integrity, short sessions, re-authentication for sensitive actions.</li>
+<li><strong>Tech:</strong> TypeScript + React (Vite), static hosting on Cloudflare Pages, using the same backend.</li>
+</ul>
+<h3 id="124-backend-in-phase-2">12.4 Backend in Phase 2</h3>
+<p>The Phase 1 relay grows into a small backend. It still <strong>cannot read any user data</strong>:
+- <strong>Plaid relay</strong> (as in Phase 1) and webhook → silent push
+- <strong>Auth:</strong> passkey (WebAuthn) registration and login, device list, sessions
+- <strong>Vault store:</strong> encrypted blobs + change records per user (Cloudflare D1 / R2 or Postgres)
+- <strong>Household:</strong> member invites, encrypted key sharing
+- Open-source, minimal logs, and an independent security review before the App Store launch</p>
 </main>
 </div>
 </body>
